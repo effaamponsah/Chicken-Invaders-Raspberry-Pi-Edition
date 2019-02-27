@@ -14,7 +14,7 @@ from sys import exit
 
 pygame.init()
 
-screen = pygame.display.set_mode((640,480),FULLSCREEN,32)
+screen = pygame.display.set_mode((640,480),0,32)
 #32 is the bit depth
 #0 is the flag
 
@@ -31,8 +31,8 @@ while True:
 
     x,y = pygame.mouse.get_pos()
     pygame.mouse.set_visible(False)
-    x-=mouse.get_width()/1/5
-    y-=mouse.get_width()/1.5
+    x-=mouse.get_width()
+    y-=mouse.get_width()
     screen.blit(mouse, (x,y))
 
     pygame.display.update()  #makes the image loaded in memory not to flicker
