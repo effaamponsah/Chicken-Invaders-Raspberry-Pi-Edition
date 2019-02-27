@@ -1,0 +1,20 @@
+Pygame is built on another game creation library called Simple DirectMedia Layer (SDL)
+SDL was written in C, a language commonly used for games because of its speed and ability to work with the hardware at a low level.
+But developing in C, or its successor C++, can be slow and error prone.
+
+
+#Almost all everything needed is in the modules
+
+.locals ::: Used to store the games constants
+
+
+
+
+
+
+
+
+
+#functions used
+.init()  :: initialized the game engine
+.BLIT:::copied one screen to another
