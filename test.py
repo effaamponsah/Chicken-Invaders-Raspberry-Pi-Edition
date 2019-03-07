@@ -31,8 +31,9 @@ while True:
 
     x,y = pygame.mouse.get_pos()
     pygame.mouse.set_visible(False)
-    x-=mouse.get_width()
-    y-=mouse.get_width()
+    x-=mouse.get_width()/2
+    y-=mouse.get_width()/3
     screen.blit(mouse, (x,y))
 
     pygame.display.update()  #makes the image loaded in memory not to flicker
+
