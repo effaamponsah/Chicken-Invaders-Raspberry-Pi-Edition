@@ -1,6 +1,6 @@
 #simple module written by Effa Amponsah as part of the  CITSA week celebration
 
-backgroundImage = 'backgroud-resized.jpg'
+backgroundImage = './data/backgroud-resized.jpg'
 mouseImage = 'shooter.png'
 
 import pygame
@@ -14,7 +14,7 @@ from sys import exit
 
 pygame.init()
 
-screen = pygame.display.set_mode((640,480),0,32)
+screen = pygame.display.set_mode((740,480),FULLSCREEN,32)
 #32 is the bit depth
 #0 is the flag
 

@@ -7,12 +7,13 @@ import pygame
 from pygame.locals import *
 
 #see if we can load more than standard BMP
+
 if not pygame.image.get_extended():
     raise SystemExit("Sorry, extended image module required")
 
 
 #game constants
-MAX_SHOTS      = 3    #most player bullets onscreen
+MAX_SHOTS      = 10   #most player bullets onscreen
 ALIEN_ODDS     = 22     #chances a new alien appears
 BOMB_ODDS      = 60    #chances a new bomb will drop
 ALIEN_RELOAD   = 12     #frames between new aliens
@@ -64,7 +65,7 @@ def load_sound(file):
 class Player(pygame.sprite.Sprite):
     speed = 10
     bounce = 24
-    gun_offset = -11
+    gun_offset = -1
     images = []
     def __init__(self):
         pygame.sprite.Sprite.__init__(self, self.containers)
@@ -90,7 +91,8 @@ class Player(pygame.sprite.Sprite):
 
 
 class Alien(pygame.sprite.Sprite):
-    speed = 13
+    global SCORE
+    speed = 5   
     animcycle = 12
     images = []
     def __init__(self):
@@ -143,7 +145,7 @@ class Shot(pygame.sprite.Sprite):
 
 
 class Bomb(pygame.sprite.Sprite):
-    speed = 20
+    speed = 9
     images = []
     def __init__(self, alien):
         pygame.sprite.Sprite.__init__(self, self.containers)
@@ -158,6 +160,7 @@ class Bomb(pygame.sprite.Sprite):
             self.kill()
 
 
+
 class Score(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -166,14 +169,14 @@ class Score(pygame.sprite.Sprite):
         self.color = Color('white')
         self.lastscore = -1
         self.update()
-        self.rect = self.image.get_rect().move(10, 450)
+        self.rect = self.image.get_rect().move(0, 460)
 
     def update(self):
         if SCORE != self.lastscore:
             self.lastscore = SCORE
             msg = "Score: %d" % SCORE
             den = ''
-            self.image = self.font.render(den, 0, self.color)
+            self.image = self.font.render(msg, 0, self.color)
 
 
 
@@ -198,7 +201,7 @@ def main(winstyle = 0):
     Player.images = [img, pygame.transform.flip(img, 1, 0)]
     img = load_image('explosion1.gif')
     Explosion.images = [img, pygame.transform.flip(img, 1, 1)]
-    Alien.images = load_images('big.gif', 'big.gif', 'big.gif')
+    Alien.images = load_images('chicken.gif', 'chicken2.gif', 'chicken3.gif')
     Bomb.images = [load_image('bomb.gif')]
     Shot.images = [load_image('shot.gif')]
 
@@ -222,7 +225,7 @@ def main(winstyle = 0):
     if pygame.mixer:
         music = os.path.join(main_dir, 'data', 'house_lo.wav')
         pygame.mixer.music.load(music)
-        pygame.mixer.music.play(-1)
+        #pygame.mixer.music.play(-1)
 
     # Initialize Game Groups
     aliens = pygame.sprite.Group()
@@ -307,7 +310,7 @@ def main(winstyle = 0):
 # changed here
         # Create new alien
         if alienreload:
-            alienreload = alienreload - 1
+            alienreload = alienreload-1
         elif not int(random.random() * ALIEN_ODDS):
             Alien()
             alienreload = ALIEN_RELOAD
@@ -318,22 +321,26 @@ def main(winstyle = 0):
 
         # Detect collisions
         for alien in pygame.sprite.spritecollide(player, aliens, 1):
-            boom_sound.play()
+            # boom_sound.play()
             Explosion(alien)
-            Explosion(player)
-            SCORE = SCORE + 1
-            player.kill()
+            #Explosion(player)
+            # SCORE = SCORE + 1
+            # player.kill()
 
+
+#i adjusted here and  increased the speed of the 
         for alien in pygame.sprite.groupcollide(shots, aliens, 1, 1).keys():
-            boom_sound.play()
-            Explosion(alien)
+            #boom_sound.play()
+            #Explosion(alien)
             SCORE = SCORE + 1
+            if SCORE%20 == 0: Alien.speed += 2
+
 
         for bomb in pygame.sprite.spritecollide(player, bombs, 1):
             boom_sound.play()
             Explosion(player)
             Explosion(bomb)
-            player.kill()
+            # player.kill()
 
         #draw the scene
         dirty = all.draw(screen)
