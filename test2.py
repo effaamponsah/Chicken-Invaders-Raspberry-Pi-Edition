@@ -113,6 +113,28 @@ class Alien(pygame.sprite.Sprite):
         self.frame = self.frame + 1
         self.image = self.images[self.frame//self.animcycle%3]
 
+class Killer(pygame.sprite.Sprite):
+    speed = 5   
+    animcycle = 10
+    image = []
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self, self.containers)
+        self.image = self.image[0]
+        self.rect = self.image.get_rect()
+        self.facing = random.choice((-1,1)) * Killer.speed
+        self.frame = 0
+        if self.facing < 0:
+            self.rect.right = SCREENRECT.right
+
+    def update(self):
+        self.rect.move_ip(self.facing, 0)
+        if not SCREENRECT.contains(self.rect):
+            self.facing = -self.facing;
+            self.rect = self.rect.clamp(SCREENRECT)
+        self.frame = self.frame + 1
+        self.image = self.image[self.frame//self.animcycle%3]
+
+
 
 class Explosion(pygame.sprite.Sprite):
     defaultlife = 12
@@ -204,6 +226,7 @@ def main(winstyle = 0):
     Alien.images = load_images('chicken.gif', 'chicken2.gif', 'chicken3.gif')
     Bomb.images = [load_image('bomb.gif')]
     Shot.images = [load_image('shot.gif')]
+    Killer.image = [load_image('alien1.gif')]
 
     #decorate the game window
     icon = pygame.transform.scale(Alien.images[0], (32, 32))
