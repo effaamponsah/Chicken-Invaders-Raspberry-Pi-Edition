@@ -77,14 +77,14 @@ class Player(pygame.sprite.Sprite):
 
     def move(self, direction):
         if direction: self.facing = direction
-        self.rect.move_ip(direction*self.speed, 0)
+        self.rect.move_ip(direction*self.speed, 1) #i can control the speed of the player here
         self.rect = self.rect.clamp(SCREENRECT)
         if direction < 0:
             self.image = self.images[0]
         elif direction > 0:
             self.image = self.images[1]
         self.rect.top = self.origtop - (self.rect.left//self.bounce%2)
-
+    
     def gunpos(self):
         pos = self.facing*self.gun_offset + self.rect.centerx
         return pos, self.rect.top
@@ -115,7 +115,7 @@ class Alien(pygame.sprite.Sprite):
 
 class Killer(pygame.sprite.Sprite):
     speed = 5   
-    animcycle = 10
+    animcycle = 12
     image = []
     def __init__(self):
         pygame.sprite.Sprite.__init__(self, self.containers)
@@ -132,7 +132,7 @@ class Killer(pygame.sprite.Sprite):
             self.facing = -self.facing;
             self.rect = self.rect.clamp(SCREENRECT)
         self.frame = self.frame + 1
-        self.image = self.image[self.frame//self.animcycle%3]
+        #self.image = self.image[self.frame//self.animcycle%3]
 
 
 
@@ -256,6 +256,7 @@ def main(winstyle = 0):
     bombs = pygame.sprite.Group()
     all = pygame.sprite.RenderUpdates()
     lastalien = pygame.sprite.GroupSingle()
+    killer = pygame.sprite.GroupSingle()
 
     #assign default groups to each sprite class
     Player.containers = all
@@ -264,6 +265,7 @@ def main(winstyle = 0):
     Bomb.containers = bombs, all
     Explosion.containers = all
     Score.containers = all
+    Killer.containers = all, killer
 
     #Create Some Starting Values
     global score
@@ -275,6 +277,7 @@ def main(winstyle = 0):
     global SCORE
     player = Player()
     Alien() #note, this 'lives' because it goes into a sprite group
+    #Killer()
     if pygame.font:
         all.add(Score())
 
@@ -320,8 +323,9 @@ def main(winstyle = 0):
         all.update()
 
         #handle player input
-        
+        #updown = keystate[K_UP] - keystate[K_DOWN]
         direction = keystate[K_RIGHT] - keystate[K_LEFT]
+        print(direction)
         player.move(direction)
         firing = keystate[K_SPACE]
         if not player.reloading and firing and len(shots) < MAX_SHOTS:
@@ -332,9 +336,12 @@ def main(winstyle = 0):
 
 # changed here
         # Create new alien
-        if alienreload:
+        something = int(random.random() * ALIEN_ODDS)
+        if alienreload:   #changed here to stop the aliens from comming
+            print("Alien reload", alienreload)
             alienreload = alienreload-1
-        elif not int(random.random() * ALIEN_ODDS):
+        elif SCORE < 60:
+            print("This is something", something)
             Alien()
             alienreload = ALIEN_RELOAD
 
@@ -357,6 +364,10 @@ def main(winstyle = 0):
             #Explosion(alien)
             SCORE = SCORE + 1
             if SCORE%20 == 0: Alien.speed += 2
+            if SCORE == 60:   #Checks score and brings the Killer
+                Killer()
+                something = 13242352434
+                
 
 
         for bomb in pygame.sprite.spritecollide(player, bombs, 1):
